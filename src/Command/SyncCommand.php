@@ -48,7 +48,9 @@ class SyncCommand extends Command
         $crawler->filter('article > div')->each(function ($node) {
             $ads = explode('<br>', $node->html());
             foreach ($ads as $ad) {
-                $this->generateAd($ad);
+                if ($ad) {
+                    $this->generateAd($ad);
+                }
             }
         });
 
@@ -62,8 +64,10 @@ class SyncCommand extends Command
         $adText = $this->removeHtmlElements($adText);
 
         $date = $this->getDate($adText);
+        $reporterName = $this->getReporterName($adText);
+        $text = $this->getText($adText);
 
-        $a = null;
+        $this->createAdIfNeeded($date, $reporterName, $text);
     }
 
     private function removeHtmlElements(string $adText): string
@@ -91,11 +95,49 @@ class SyncCommand extends Command
             $dateString = $dateString . $adText[$i];
         }
 
-        $a = new DateTimeImmutable();
-        $b = new DateTimeImmutable('2020-01-01');
+        return new DateTime($dateString);
+    }
 
-        var_dump($b);
+    private function getReporterName(string $adText): ?string
+    {
+        $reporterNameStart = strpos($adText, ']');
+        $reporterNameEnd = strpos($adText, ':', $reporterNameStart);
 
-        return new DateTime();
+        $reporterName = null;
+
+        for ($i = $reporterNameStart+2; $i < $reporterNameEnd; $i++) {
+            $reporterName = $reporterName . $adText[$i];
+        }
+
+        return $reporterName;
+    }
+
+    private function getText(string $adText): ?string
+    {
+        $reporterNameStart = strpos($adText, ']');
+        $reporterNameEnd = strpos($adText, ':', $reporterNameStart);
+
+        return substr($adText, $reporterNameEnd+2);
+    }
+
+    private function createAdIfNeeded(\DateTime $dateTime, string $reporterName, string $text): void
+    {
+        $ad = $this->entityManager->getRepository(Ad::class)->findOneBy([
+            'reporter' => $reporterName,
+            'text' => $text
+        ]);
+
+        if ($ad) {
+            $ad->setDatetime($dateTime);
+        } else {
+            $ad = new Ad();
+            $ad->setDatetime($dateTime);
+            $ad->setReporter($reporterName);
+            $ad->setText($text);
+
+            $this->entityManager->persist($ad);
+        }
+
+        $this->entityManager->flush();
     }
 }
