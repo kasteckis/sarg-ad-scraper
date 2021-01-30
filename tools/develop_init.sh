@@ -5,6 +5,7 @@
 cd /var/www/html
 composer install # Uncomment this if you have composer already setup
 php bin/console d:s:u --force # Uncomment this if you want to update database scheme on every docker compose up
+php bin/console app:sync
 # php bin/console doctrine:fixtures:load --append # Uncomment this if you want to add fixtures on every docker compose up
 echo "Project has been started"
 echo "Access project website - http://192.168.6.2/"
