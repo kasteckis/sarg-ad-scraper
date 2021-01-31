@@ -47,6 +47,7 @@ class SyncCommand extends Command
 
         $crawler->filter('article > div')->each(function ($node) {
             $ads = explode('<br>', $node->html());
+            $ads = array_reverse($ads);
             foreach ($ads as $ad) {
                 if ($ad) {
                     $this->generateAd($ad);
@@ -67,7 +68,9 @@ class SyncCommand extends Command
         $reporterName = $this->getReporterName($adText);
         $text = $this->getText($adText);
 
-        $this->createAdIfNeeded($date, $reporterName, $text);
+        if ($date && $reporterName && $text) {
+            $this->createAdIfNeeded($date, $reporterName, $text);
+        }
     }
 
     private function removeHtmlElements(string $adText): string
@@ -123,12 +126,12 @@ class SyncCommand extends Command
     private function createAdIfNeeded(\DateTime $dateTime, string $reporterName, string $text): void
     {
         $ad = $this->entityManager->getRepository(Ad::class)->findOneBy([
-            'reporter' => $reporterName,
             'text' => $text
         ]);
 
         if ($ad) {
             $ad->setDatetime($dateTime);
+            $ad->setReporter($reporterName);
         } else {
             $ad = new Ad();
             $ad->setDatetime($dateTime);
