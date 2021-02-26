@@ -20,4 +20,16 @@ class HomeController extends AbstractController
             'ads' => $ads
         ]);
     }
+
+    /**
+     * @Route("/numatomos", name="coming_job_list")
+     */
+    public function comingJobList(): Response
+    {
+        $ads = $this->getDoctrine()->getRepository(Ad::class)->findBy([], ['datetime' => 'desc']);
+
+        return $this->render('home/jobs.html.twig', [
+            'ads' => $ads
+        ]);
+    }
 }
