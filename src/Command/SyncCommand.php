@@ -3,11 +3,11 @@
 namespace App\Command;
 
 use App\Service\DownloadAdsService;
+use App\Service\DownloadJobsTextsService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\HttpClient\HttpClient;
 
 class SyncCommand extends Command
 {
@@ -15,20 +15,24 @@ class SyncCommand extends Command
 
     private DownloadAdsService $downloadAdsService;
 
+    private DownloadJobsTextsService $downloadJobsTextsService;
+
     /**
      * SyncCommand constructor.
      * @param DownloadAdsService $downloadAdsService
+     * @param DownloadJobsTextsService $downloadJobsTextsService
      */
-    public function __construct(DownloadAdsService $downloadAdsService)
+    public function __construct(DownloadAdsService $downloadAdsService, DownloadJobsTextsService $downloadJobsTextsService)
     {
         $this->downloadAdsService = $downloadAdsService;
+        $this->downloadJobsTextsService = $downloadJobsTextsService;
         parent::__construct();
     }
 
     protected function configure()
     {
         $this
-            ->setDescription('Sync ads with database')
+            ->setDescription('Sync data with database')
         ;
     }
 
@@ -37,8 +41,9 @@ class SyncCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $this->downloadAdsService->download();
+        $this->downloadJobsTextsService->download();
 
-        $io->success('Ads were synced!');
+        $io->success('Data was synced!');
 
         return Command::SUCCESS;
     }
