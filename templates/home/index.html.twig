@@ -3,29 +3,24 @@
 {% block body %}
     <div class="container mt-5 mb-5">
         <h1><a href="https://sarg.lt">Sarg.lt</a> reporterių skelbimų archyvas su paprasta paieška :)</h1>
-        <h3>Saugoma {{ ads|length }} unikalių skelbimų nuo 2021-01-30</h3>
+        <h3>Saugoma {{ adsCount }} unikalių skelbimų nuo 2021-01-30</h3>
         <table id="table"
                data-toggle="table"
                data-search="true"
                data-show-columns="true"
+               data-url="{{ path('ads_data') }}"
+               data-side-pagination="server"
                data-pagination="true"
                data-page-size="25"
         >
             <thead>
             <tr>
-                <th>Data</th>
-                <th data-visible="false">Reporteris</th>
-                <th>Skelimas</th>
+                <th data-field="datetime">Data</th>
+                <th data-field="reporter" data-visible="false">Reporteris</th>
+                <th data-field="text">Skelbimas</th>
             </tr>
             </thead>
             <tbody>
-            {% for ad in ads %}
-                <tr>
-                    <td>{{ ad.datetime|date("Y-m-d H:i:s") }}</td>
-                    <td>{{ ad.reporter }}</td>
-                    <td>{{ ad.text }}</td>
-                </tr>
-            {% endfor %}
             </tbody>
         </table>
     </div>

@@ -14,10 +14,10 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        $ads = $this->getDoctrine()->getRepository(Ad::class)->findBy([], ['datetime' => 'desc']);
+        $adsCount = $this->getDoctrine()->getRepository(Ad::class)->count([]);
 
         return $this->render('home/index.html.twig', [
-            'ads' => $ads
+            'adsCount' => $adsCount
         ]);
     }
 
