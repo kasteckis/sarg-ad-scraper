@@ -22,6 +22,18 @@ class HomeController extends AbstractController
     }
 
     /**
+     * @Route("/skelbimai/old", name="ads_client_side_pagination")
+     */
+    public function skelbimaiOld(): Response
+    {
+        $ads = $this->getDoctrine()->getRepository(Ad::class)->findBy([], ['datetime' => 'desc']);
+
+        return $this->render('home/clientSidePaginationIndex.html.twig', [
+            'ads' => $ads
+        ]);
+    }
+
+    /**
      * @Route("/numatomos", name="coming_job_list")
      */
     public function comingJobList(): Response
