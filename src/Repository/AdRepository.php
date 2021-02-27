@@ -32,6 +32,17 @@ class AdRepository extends ServiceEntityRepository
         ;
     }
 
+    public function getAdsBySearchCount($search)
+    {
+        return $this->createQueryBuilder('ad')
+            ->select('count(ad.id)')
+            ->andWhere('ad.text LIKE :search')
+            ->setParameter('search', '%' . $search . '%')
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
     /*
     public function findOneBySomeField($value): ?Ad
     {

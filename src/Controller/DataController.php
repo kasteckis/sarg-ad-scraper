@@ -22,10 +22,12 @@ class DataController extends AbstractController
         $search = $request->get('search') ? $request->get('search') : '';
 
         $ads = $this->getDoctrine()->getRepository(Ad::class)->getAds($offset, $limit, $search);
+        $filteredAdsCount = $this->getDoctrine()->getRepository(Ad::class)->getAdsBySearchCount($search);
         $adsCount = $this->getDoctrine()->getRepository(Ad::class)->count([]);
 
         $data = [
-            'total' => $adsCount,
+            'total' => $filteredAdsCount,
+            'totalNotFiltered' => $adsCount,
             'rows' => $this->adsEntityArrayToArray($ads)
         ];
 
