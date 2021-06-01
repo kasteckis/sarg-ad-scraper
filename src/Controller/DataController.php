@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ad;
+use App\Service\AnalyticsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +11,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DataController extends AbstractController
 {
+    private AnalyticsService $analyticsService;
+
+    /**
+     * DataController constructor.
+     * @param AnalyticsService $analyticsService
+     */
+    public function __construct(AnalyticsService $analyticsService)
+    {
+        $this->analyticsService = $analyticsService;
+    }
+
     /**
      * @Route("/api/skelbimai", name="ads_data")
      * @param Request $request
@@ -17,6 +29,7 @@ class DataController extends AbstractController
      */
     public function index(Request $request): Response
     {
+        $this->analyticsService->logVisit($request);
         $offset = $request->get('offset') ? $request->get('offset') : 0;
         $limit = $request->get('limit') ? $request->get('limit') : 100;
         $search = $request->get('search') ? $request->get('search') : '';
