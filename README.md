@@ -3,8 +3,7 @@
 # Setup
 
 1. Clone this repository
-2. `$ docker-compose up`
-3. `$ ./tools/develop_init.sh`
+2. `$ ./tools/prepare.sh`
 
 # Commands
 
