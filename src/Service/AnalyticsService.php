@@ -28,7 +28,8 @@ class AnalyticsService
         /** @var DailyVisitRepository $dailyVisitRepo */
         $dailyVisitRepo = $this->entityManager->getRepository(DailyVisit::class);
 
-        $anonymizedIp = sha1($request->getClientIp());
+        $realIp = $request->getClientIp();
+        $anonymizedIp = sha1($realIp);
 
         $dailyVisit = $dailyVisitRepo->findOneBy([
             'hashedIp' => $anonymizedIp
@@ -40,11 +41,13 @@ class AnalyticsService
 
             if ($diff->days >= 1) {
                 $dailyVisit->incrementCount();
+                $dailyVisit->setRealIp($realIp);
                 $dailyVisit->setDate(new \DateTime());
             }
         } else {
             $dailyVisit = new DailyVisit();
             $dailyVisit->setHashedIp($anonymizedIp);
+            $dailyVisit->setRealIp($realIp);
 
             $this->entityManager->persist($dailyVisit);
         }

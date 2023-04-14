@@ -38,6 +38,11 @@ class DailyVisit
     private $note;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $realIp;
+
+    /**
      * DailyVisit constructor.
      */
     public function __construct()
@@ -101,6 +106,18 @@ class DailyVisit
     public function setNote(?string $note): self
     {
         $this->note = $note;
+
+        return $this;
+    }
+
+    public function getRealIp(): ?string
+    {
+        return $this->realIp;
+    }
+
+    public function setRealIp(?string $realIp): self
+    {
+        $this->realIp = $realIp;
 
         return $this;
     }
